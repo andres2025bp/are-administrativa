@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Contabilidad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .active-tab {
+            background-color: #374253;
+            color: white;
+        }
+        #editable-table td:focus {
+            outline: 2px solid #232528;
+            background-color: #f0f7ff;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6 p-4 bg-white rounded-lg shadow">
+            <header class="text-center">
+                <h1 class="text-3xl font-bold text-gray-600">AREA ADMINISTRATIVA KIOSCO LAS TABLITAS</h1>
+
+                <p class="text-gray-600 mt-2">Gestión y análisis de datos</p>
+            </header>
+            <div class="flex items-center space-x-4">
+                <img src="Diseño sin título.png" 
+                     alt="Foto de perfil" 
+                     class="w-10 h-10 rounded-full border-2 border-gray-500">
+                <div class="flex flex-col items-end">
+                    <span class="text-gray-700 font-medium">HOLA BIENVENIDO ADMINISTADOR(@)</span>
+                    <button id="logout-btn" class="text-sm text-gray-600 hover:text-gray-800">Cerrar sesión</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap border-b border-gray-200 mb-8">
+            <button class="tab-btn px-4 py-2 font-medium rounded-t-lg mr-1 active-tab" data-tab="registros">Registros</button>
+            <button class="tab-btn px-4 py-2 font-medium rounded-t-lg mr-1 bg-gray-200" data-tab="estadisticas">Estadísticas</button>
+            
+        </div>
+
+        <div id="registros-content" class="tab-content bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-semibold text-gray-800">Registros Contables</h2>
+                <button id="add-row" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Añadir Fila</button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table id="editable-table" class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border p-1 text-left">Fecha</th>
+                            <th class="border p-2 text-left">Nombre de prestador de Servicio</th>
+                            <th class="border p-3 text-left">Precio del servicio</th>
+                            <th class="border p-4 text-left">valor cancelado </th>
+                            <th class="border p-5 text-left">saldo x$2.000 </th>
+                            <th class="border p-6 text-left">saldo x$3.000 </th>
+                            <th class="border p-7 text-left">saldo x$5.000 </th>
+                            <th class="border p-8 text-left">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border p-1" contenteditable="true">14-08-2025</td>
+                            <td class="border p-2" contenteditable="true"></td>
+                            <td class="border p-3" contenteditable="true">0.00</td>
+                            <td class="border p-4" contenteditable="true">0.00</td>
+                            <td class="border p-5" contenteditable="true">0.00</td>
+                            <td class="border p-6" contenteditable="true">0.00</td>
+                            <td class="border p-7" contenteditable="true">0.00</td>
+                            <td class="border p-8"><button class="delete-row text-red-500 hover:text-red-700">Eliminar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+          <div class="mt-6 bg-blue-50 p-6 rounded-lg shadow-md">
+
+    <h3 class="font-medium text-blue-800 mb-4 text-lg md:text-xl">Resumen Financiero</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+
+        <!-- Saldo Total -->
+        <div class="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow">
+            <p class="text-gray-500 mb-2">Saldo Total</p>
+            <p class="text-2xl font-bold text-green-600" id="valor-a-cancelar">$0.00</p>
+           
+        </div>
+
+        <!-- Saldo Final -->
+        <div class="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow">
+            <p class="text-gray-500 mb-2">Saldo Final</p>
+            <p class="text-2xl font-bold text-green-600" id="total-saldo-final">$0.00</p>
+        </div>
+
+        <!-- Total de Lavador 1 -->
+        <div class="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow">
+            <p class="text-gray-500 mb-2">Total de Lavador 1</p>
+            <p class="text-2xl font-bold text-green-600" id="total-expenses-lavador1">$0.00</p>
+        </div>
+
+        <!-- Puedes agregar más tarjetas aquí -->
+        <div class="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow">
+            <p class="text-gray-500 mb-2">Total de Lavador 2</p>
+            <p class="text-2xl font-bold text-green-600" id="total-expenses-lavador2">$0.00</p>
+        </div>
+
+    </div>
+</div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="estadisticas-content" class="tab-content hidden bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6">Estadísticas Financieras</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="font-medium text-gray-800 mb-4">saldo general</h3>
+                    <canvas id="incomeExpenseChart" height="300"></canvas>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="font-medium text-gray-800 mb-4">Gastos por Categoría</h3>
+                    <canvas id="expenseByCategoryChart" height="300"></canvas>
+                </div>
+            </div>
+           
+        </div>
+
+        <div id="configuracion-content" class="tab-content hidden bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6">Configuración</h2>
+            
+            <div class="mb-6 bg-blue-50 p-4 rounded-lg">
+                <h3 class="font-medium text-gray-800 mb-2">Resumen Financiero</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-3 rounded shadow">
+                        <p class="text-gray-500">total-saldo</p>
+                        <p class="text-2xl font-bold text-green-600" id="config-total-saldo">$0.00</p>
+                    </div>
+                   
+                    <div class="bg-white p-3 rounded shadow">
+                        <p class="text-gray-500">total-saldo-final</p>
+                        <p class="text-2xl font-bold" id="config-total-saldo-final">$0.00</p>
+                    </div>
+                    <div class="bg-white p-3 rounded shadow">
+                        <p class="text-gray-500">total-lavador1</p>
+                        <p class="text-2xl font-bold text-green-600" id="config-total-lavador1">$0.00</p>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 mb-2">Decimales</label>
+                <input type="number" min="0" max="4" value="2" class="w-full p-2 border rounded">
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 mb-2">Gestión de Categorías</label>
+                <div class="border rounded p-4 bg-gray-50">
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="new-category" placeholder="Agregar nueva categoría" class="flex-1 p-2 border rounded">
+                        <button id="add-category" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Agregar</button>
+                    </div>
+                    <div class="space-y-2" id="categories-list">
+                        <!-- Categorías se cargarán aquí dinámicamente -->
+                    </div>
+                </div>
+            </div>
+            
+           
+
+    <script>
+        // Datos iniciales
+        const categories = ['Materiales', 'Personal', 'Servicios', 'Alquiler', 'Otros'];
+        let userData = {
+            name: "Usuario Actual",
+            email: "usuario@ejemplo.com",
+            company: "Mi Empresa S.A.",
+            role: "Administrador",
+            photo: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7fa8cd52-e8b4-44fe-80d0-1911b1a004d5.png"
+        };
+
+        // Funciones para guardar y cargar datos
+        function saveTableData() {
+            const tableData = [];
+            document.querySelectorAll('#editable-table tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('td');
+                tableData.push({
+                    fecha: cells[0].textContent,
+                    name: cells[1].textContent,
+                    precio: cells[2].textContent,
+                    precio: cells[3].textContent,
+                    precio: cells[4].textContent,
+                    texto: cells[5].textContent
+                });
+            });
+            localStorage.setItem('contabilidadData', JSON.stringify(tableData));
+        }
+
+        function loadTableData() {
+            const savedData = localStorage.getItem('contabilidadData');
+            if (savedData) {
+                const tableData = JSON.parse(savedData);
+                const tbody = document.querySelector('#editable-table tbody');
+                tbody.innerHTML = '';
+                
+                tableData.forEach(rowData => {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td class="border p-1" contenteditable="true">${rowData.fecha}</td>
+                        <td class="border p-2" contenteditable="true">${rowData.name}</td>
+                        <td class="border p-3" contenteditable="true">${rowData.precio}</td>
+                        <td class="border p-4" contenteditable="true">${rowData.precio}</td>
+                        <td class="border p-5" contenteditable="true">${rowData.precio}</td>
+                        <td class="border p-6" contenteditable="true">${rowData.precio}</td>
+                        <td class="border p-7" contenteditable="true">${rowData.precio}</td>
+                        <td class="border p-8"><button class="delete-row text-red-500 hover:text-red-700">Eliminar</button></td>
+                    `;
+                    tbody.appendChild(newRow);
+                    
+                    // Agregar eventos
+                    newRow.querySelector('.delete-row').addEventListener('click', function() {
+                        this.closest('tr').remove();
+                        saveTableData();
+                        updateFinancialSummary();
+                    });
+                    
+                    newRow.querySelectorAll('[contenteditable="true"]').forEach(cell => {
+                        cell.addEventListener('input', () => {
+                            saveTableData();
+                            updateFinancialSummary();
+                        });
+                    });
+                });
+            }
+        }
+        
+        // Configurar pestañas
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remover clase activa de todos los botones
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('active-tab');
+                    b.classList.add('bg-gray-200');
+                });
+                
+                // Añadir clase activa al botón clickeado
+                btn.classList.add('active-tab');
+                btn.classList.remove('bg-gray-200');
+                
+                // Ocultar todo el contenido
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                // Mostrar el contenido correspondiente
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(`${tabId}-content`).classList.remove('hidden');
+                
+                // Si es la pestaña de estadísticas, actualizar gráficos
+                if(tabId === 'estadisticas') {
+                    setTimeout(updateCharts, 100);
+                }
+            });
+        });
+        
+        // Manejar tabla editable
+        document.getElementById('add-row').addEventListener('click', () => {
+            const tbody = document.querySelector('#editable-table tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td class="border p-1" contenteditable="true">${new Date().toISOString().split('T')[0]}</td>
+                <td class="border p-2" contenteditable="true"></td> 
+                <td class="border p-3" contenteditable="true">$0.00</td>
+                <td class="border p-4" contenteditable="true">$0.00</td>
+                <td class="border p-5" contenteditable="true">$0.00</td>
+                <td class="border p-6" contenteditable="true">$0.00</td>
+                <td class="border p-7" contenteditable="true">$0.00</td>
+                <td class="border p-8"><button class="delete-row text-red-500 hover:text-red-700">Eliminar</button></td>
+            `;
+            tbody.appendChild(newRow);
+            
+            // Agregar evento al nuevo botón eliminar
+            newRow.querySelector('.delete-row').addEventListener('click', function() {
+                this.closest('tr').remove();
+                saveTableData();
+                updateFinancialSummary();
+                // Force chart update if on statistics tab
+                if(!document.getElementById('estadisticas-content').classList.contains('hidden')) {
+                    updateCharts();
+                }
+            });
+            
+            // Agregar eventos a las nuevas celdas editables
+            newRow.querySelectorAll('[contenteditable="true"]').forEach(cell => {
+                cell.addEventListener('input', () => {
+                    saveTableData();
+                    updateFinancialSummary();
+                });
+            });
+            
+            // Guardar datos
+            saveTableData();
+        });
+        
+        // Manejar eliminación de filas
+        document.querySelectorAll('.delete-row').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('tr').remove();
+                saveTableData();
+                updateFinancialSummary();
+            });
+        });
+        
+        // Actualizar resumen financiero cuando se editan celdas
+        document.querySelectorAll('#editable-table [contenteditable="true"]').forEach(cell => {
+            cell.addEventListener('input', ( ) => { 
+                saveTableData(); 
+                updateFinancialSummary();
+            });
+        });
+        
+        // Función para actualizar el resumen financiero
+        function updateFinancialSummary() {
+            let totalincome = 0;
+            let totalexpenses = 0;
+
+
+            // Recorrer las filas de la tabla y calcular totales
+
+            document.querySelectorAll('#editable-table tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const income = parseFloat(cells[3].textContent.replace('$', '').replace(',', '')) || 0;
+                const expense = parseFloat(cells[4].textContent.replace('$', '').replace(',', '')) || 0;
+
+                totalincome += income;
+                totalexpenses += expense;
+            });
+            
+            // Actualizar resumen en tab de registros
+            document.getElementById('total-income').textContent = `${totalincome.toFixed(2)}`;
+            document.getElementById('total-expenses').textContent = `${totalexpenses.toFixed(2)}`;
+
+            // Actualizar resumen en tab de configuración
+            document.getElementById('config-total-income').textContent = `${totalincome.toFixed(2)}`;
+            document.getElementById('config-total-expenses').textContent = `${totalexpenses.toFixed(2)}`;
+
+            const balance = totalincome - totalexpenses;
+            const balanceElement = document.getElementById('balance');
+            const configBalanceElement = document.getElementById('config-balance');
+            
+            balanceElement.textContent = `${balance.toFixed(2)}`;
+            configBalanceElement.textContent = `${balance.toFixed(2)}`;
+            
+            if(balance >= 0) {
+                balanceElement.classList.remove('text-red-600');
+                balanceElement.classList.add('text-green-600');
+                configBalanceElement.classList.remove('text-red-600');
+                configBalanceElement.classList.add('text-green-600');
+            } else {
+                balanceElement.classList.remove('text-green-600');
+                balanceElement.classList.add('text-red-600');
+                configBalanceElement.classList.remove('text-green-600');
+                configBalanceElement.classList.add('text-red-600');
+            }
+        }
+        
+        // Gráficos
+        let incomeExpenseChart, expenseByCategoryChart, monthlyTrendsChart;
+        
+        function updateCharts() {
+            // Recopilar datos reales de la tabla
+            const transactions = [];
+            const months = {};
+            const categoriesData = {};
+            
+            document.querySelectorAll('#editable-table tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const date = new Date(cells[0].textContent);
+                const month = date.toLocaleString('default', { month: 'short' });
+                const category = cells[2].textContent;
+                const income = parseFloat(cells[3].textContent) || 0;
+                const expense = parseFloat(cells[4].textContent) || 0;
+                
+                // Agrupar por mes
+                if (!months[month]) {
+                    months[month] = { income: 0, expense: 0 };
+                }
+                months[month].income += income;
+                months[month].expense += expense;
+                
+                // Agrupar por categoría (solo gastos)
+                if (expense > 0) {
+                    if (!categoriesData[category]) {
+                        categoriesData[category] = 0;
+                    }
+                    categoriesData[category] += expense;
+                }
+                
+                transactions.push({ month, category, income, expense });
+            });
+            
+            // Preparar datos para gráficos
+            const monthLabels = Object.keys(months);
+            const monthIncome = monthLabels.map(m => months[m].income);
+            const monthExpense = monthLabels.map(m => months[m].expense);
+            
+            const categoryLabels = Object.keys(categoriesData);
+            const categoryExpenses = categoryLabels.map(c => categoriesData[c]);
+            
+            // Destruir gráficos existentes si los hay
+            if(incomeExpenseChart) incomeExpenseChart.destroy();
+            if(expenseByCategoryChart) expenseByCategoryChart.destroy();
+            if(monthlyTrendsChart) monthlyTrendsChart.destroy();
+
+
+            
+            // Gráfico de Ingresos vs Gastos
+            const incomeExpenseCtx = document.getElementById('incomeExpenseChart').getContext('2d');
+            incomeExpenseChart = new Chart(incomeExpenseCtx, {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [
+                        {
+                            label: 'saldo general',
+                            data: monthIncome,
+                            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'x2',
+                            data: monthExpense,
+                            backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'x3',
+                            data: monthExpense,
+                            backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                            borderColor: 'rgba(255, 206, 86, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'x5',
+                            data: monthExpense,
+                            backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }
+
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico de Gastos por Categoría
+            const expenseByCategoryCtx = document.getElementById('expenseByCategoryChart').getContext('2d');
+            expenseByCategoryChart = new Chart(expenseByCategoryCtx, {
+                type: 'bar',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: 'Rango de Gastos',
+                        data: categoryExpenses,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Gráfico de Tendencias Mensuales
+            const monthlyTrendsCtx = document.getElementById('monthlyTrendsChart').getContext('2d');
+            monthlyTrendsChart = new Chart(monthlyTrendsCtx, {
+                type: 'line',
+                data: {
+                    labels: monthLabels,
+                    datasets: [
+                        {
+                            label: 'Ingresos',
+                            data: monthIncome,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Gastos',
+                            data: monthExpense,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Actualizar perfil
+        function updateProfile() {
+            // Actualizar datos del usuario
+            userData.name = document.querySelector('#perfil-content input[type="text"]').value;
+            userData.email = document.querySelector('#perfil-content input[type="email"]').value;
+            userData.company = document.querySelectorAll('#perfil-content input[type="text"]')[1].value;
+            
+            // Actualizar header
+            document.querySelector('.flex.items-center.space-x-4 span').textContent = userData.name;
+            document.querySelector('.flex.items-center.space-x-4 img').src = userData.photo;
+            
+            alert('Perfil actualizado correctamente');
+        }
+
+        // Gestión de categorías
+        function loadCategories() {
+            const categoriesList = document.getElementById('categories-list');
+            categoriesList.innerHTML = '';
+            
+            categories.forEach((category, index) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'flex justify-between items-center bg-white p-2 rounded border';
+                categoryDiv.innerHTML = `
+                    <span>${category}</span>
+                    ${index >= 5 ? '<button class="text-red-500 hover:text-red-700 remove-category" data-category="' + category + '">Eliminar</button>' : '<span class="text-gray-400">Predeterminada</span>'}
+                `;
+                categoriesList.appendChild(categoryDiv);
+            });
+            
+            // Agregar eventos a botones eliminar
+            document.querySelectorAll('.remove-category').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const categoryToRemove = this.getAttribute('data-category');
+                    const index = categories.indexOf(categoryToRemove);
+                    if (index > -1) {
+                        categories.splice(index, 1);
+                        loadCategories();
+                    }
+                });
+            });
+        }
+        
+        function addCategory() {
+            const newCategoryInput = document.getElementById('new-category');
+            const newCategory = newCategoryInput.value.trim();
+            
+            if (newCategory && !categories.includes(newCategory)) {
+                categories.push(newCategory);
+                newCategoryInput.value = '';
+                loadCategories();
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTableData();
+            updateFinancialSummary();
+            updateCharts();
+            loadCategories();
+            
+            // Configurar botón guardar perfil
+            document.querySelector('#perfil-content button.bg-blue-500').addEventListener('click', updateProfile);
+            
+            // Configurar gestión de categorías
+            document.getElementById('add-category').addEventListener('click', addCategory);
+            document.getElementById('new-category').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addCategory();
+                }
+            });
+        });
+
+        // Manejar cierre de sesión
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            if(confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                // Aquí iría la lógica real de logout
+                // Por ahora solo redireccionamos al inicio
+                window.location.href = 'docty.html'; 
+            }
+        });
+    </script>
+</body>
+</html>
+
